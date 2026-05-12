@@ -1029,113 +1029,174 @@ st.set_page_config(
 # ── CSS global ─────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-  [data-testid="stAppViewContainer"] { background: #f0f2f6; }
-  [data-testid="stSidebar"]          { display: none; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  /* Banner principal */
-  .main-banner {
-    background: linear-gradient(135deg, #1F4E79 0%, #2E75B6 100%);
-    border-radius: 14px;
-    padding: 30px 40px;
-    margin-bottom: 28px;
+  /* Base */
+  html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Inter', sans-serif !important;
+    background: #f4f6f9 !important;
+  }
+  [data-testid="stSidebar"] { display: none; }
+  [data-testid="stMainBlockContainer"] { padding-top: 1.5rem !important; }
+
+  /* Banner */
+  .banner {
+    background: linear-gradient(135deg, #0f2744 0%, #1a4a7a 60%, #2563ab 100%);
+    border-radius: 16px;
+    padding: 28px 40px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
+    box-shadow: 0 4px 20px rgba(15,39,68,.25);
   }
-  .main-banner-icon  { font-size: 52px; line-height: 1; }
-  .main-banner-title { font-size: 32px; font-weight: 800; color: #fff;
-                       margin: 0; letter-spacing: -0.5px; }
-  .main-banner-sub   { font-size: 14px; color: rgba(255,255,255,0.75);
-                       margin: 6px 0 0 0; }
+  .banner-logo {
+    width: 52px; height: 52px; background: rgba(255,255,255,.15);
+    border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; font-size: 28px; flex-shrink: 0;
+  }
+  .banner-title { font-size: 26px; font-weight: 800; color: #fff;
+                  margin: 0; letter-spacing: -0.3px; }
+  .banner-sub   { font-size: 13px; color: rgba(255,255,255,.6);
+                  margin: 3px 0 0 0; font-weight: 400; }
+  .banner-badge {
+    margin-left: auto; background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2); border-radius: 20px;
+    padding: 4px 14px; font-size: 12px; color: rgba(255,255,255,.8);
+    font-weight: 500; white-space: nowrap;
+  }
 
-  /* Tarjetas de navegación */
-  .nav-row   { display: flex; gap: 20px; margin-bottom: 28px; }
-  .nav-card  {
+  /* Navegación tipo segmented control */
+  .nav-wrap {
+    background: #fff; border-radius: 12px; padding: 6px;
+    display: flex; gap: 4px; margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  .nav-btn {
+    flex: 1; padding: 12px 20px; border-radius: 8px; border: none;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600; transition: all .18s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .nav-btn.inactive { background: transparent; color: #6b7280; }
+  .nav-btn.inactive:hover { background: #f3f4f6; color: #374151; }
+  .nav-btn.active {
+    background: linear-gradient(135deg, #0f2744, #1a4a7a);
+    color: #fff; box-shadow: 0 2px 8px rgba(15,39,68,.3);
+  }
+
+  /* Tarjetas métricas */
+  .kpi-row { display: flex; gap: 14px; margin-bottom: 22px; }
+  .kpi {
     flex: 1; background: #fff; border-radius: 12px;
-    padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border: 2px solid transparent; cursor: pointer;
-    transition: border-color .2s, box-shadow .2s;
+    padding: 18px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    border-top: 3px solid #2563ab;
+    transition: box-shadow .2s;
   }
-  .nav-card:hover { border-color: #2E75B6; box-shadow: 0 4px 16px rgba(46,117,182,.15); }
-  .nav-card.active { border-color: #1F4E79; box-shadow: 0 4px 16px rgba(31,78,121,.2); }
-  .nav-icon  { font-size: 36px; margin-bottom: 10px; }
-  .nav-label { font-size: 20px; font-weight: 700; color: #1F4E79; margin: 0; }
-  .nav-desc  { font-size: 13px; color: #6b7280; margin: 6px 0 0 0; }
+  .kpi:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+  .kpi-label { font-size: 11px; font-weight: 600; color: #9ca3af;
+               text-transform: uppercase; letter-spacing: .8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: #0f2744;
+               margin: 6px 0 0 0; line-height: 1; }
+  .kpi-sub   { font-size: 12px; color: #6b7280; margin: 4px 0 0 0; }
 
-  /* Tabs */
-  [data-testid="stTabs"] > div > div { gap: 8px; }
-  [data-testid="stTab"] {
-    border-radius: 8px 8px 0 0 !important;
-    font-weight: 600 !important; font-size: 14px !important;
-    color: #374151 !important;
+  /* Cards */
+  .card {
+    background: #fff; border-radius: 12px; padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 18px;
   }
-  [data-testid="stTab"][aria-selected="true"] {
-    color: #1F4E79 !important;
-    border-bottom: 3px solid #1F4E79 !important;
-  }
-  [data-testid="stTab"] p,
-  [data-testid="stTab"] span { color: inherit !important; }
-
-  /* Métricas */
-  .metric-row { display: flex; gap: 16px; margin-bottom: 24px; }
-  .metric-card {
-    flex: 1; background: #fff; border-radius: 10px;
-    padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    border-left: 4px solid #2E75B6;
-  }
-  .metric-label { font-size: 12px; color: #6b7280; font-weight: 600;
-                  text-transform: uppercase; letter-spacing: .5px; }
-  .metric-value { font-size: 32px; font-weight: 700; color: #1F4E79;
-                  margin: 4px 0 0 0; line-height: 1; }
-
-  /* Cards de sección */
-  .upload-card, .config-panel {
-    background: #fff; border-radius: 10px; padding: 24px;
-    box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 20px;
-  }
-  .section-title {
-    font-size: 13px; font-weight: 700; color: #374151;
-    text-transform: uppercase; letter-spacing: .6px; margin-bottom: 12px;
+  .card-title {
+    font-size: 11px; font-weight: 700; color: #6b7280;
+    text-transform: uppercase; letter-spacing: .8px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
   }
 
   /* Pills */
-  .pill { display:inline-block; padding:2px 10px; border-radius:20px;
-          font-size:12px; font-weight:600; }
-  .pill-blue  { background:#dbeafe; color:#1d4ed8; }
-  .pill-green { background:#dcfce7; color:#166534; }
+  .tag { display:inline-flex; align-items:center; gap:4px; padding:3px 10px;
+         border-radius:6px; font-size:12px; font-weight:600; margin:2px; }
+  .tag-blue  { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+  .tag-green { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+  .tag-gray  { background:#f9fafb; color:#374151; border:1px solid #e5e7eb; }
 
-  /* Botones primarios */
+  /* Tabs */
+  [data-testid="stTabs"] > div > div { gap: 4px; border-bottom: 2px solid #e5e7eb !important; }
+  [data-testid="stTab"] {
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600 !important; font-size: 13px !important;
+    color: #6b7280 !important; padding: 10px 18px !important;
+    border-bottom: 2px solid transparent !important;
+  }
+  [data-testid="stTab"][aria-selected="true"] {
+    color: #0f2744 !important;
+    border-bottom: 2px solid #0f2744 !important;
+    background: transparent !important;
+  }
+  [data-testid="stTab"] p, [data-testid="stTab"] span { color: inherit !important; }
+
+  /* Botones primarios Streamlit */
   [data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg,#1F4E79,#2E75B6) !important;
-    color: #fff !important; border: none !important;
-    border-radius: 8px !important; font-weight: 600 !important; font-size:15px !important;
+    background: linear-gradient(135deg, #0f2744, #1a4a7a) !important;
+    color: #fff !important; border: none !important; border-radius: 8px !important;
+    font-weight: 600 !important; font-size: 14px !important;
+    letter-spacing: .2px !important; box-shadow: 0 2px 8px rgba(15,39,68,.25) !important;
+    transition: all .2s !important;
   }
   [data-testid="stButton"] > button[kind="primary"]:hover {
-    background: linear-gradient(135deg,#163d5f,#1F4E79) !important; color:#fff !important;
+    background: linear-gradient(135deg, #0a1e35, #0f2744) !important;
+    box-shadow: 0 4px 12px rgba(15,39,68,.35) !important;
+    transform: translateY(-1px) !important;
   }
+  [data-testid="stButton"] > button[kind="secondary"] {
+    background: #fff !important; color: #374151 !important;
+    border: 1.5px solid #d1d5db !important; border-radius: 8px !important;
+    font-weight: 600 !important; font-size: 14px !important;
+  }
+  [data-testid="stButton"] > button[kind="secondary"]:hover {
+    border-color: #0f2744 !important; color: #0f2744 !important;
+    background: #f8faff !important;
+  }
+
   /* Botón descarga */
   [data-testid="stDownloadButton"] > button {
-    background: linear-gradient(135deg,#1F4E79,#2E75B6) !important;
-    color: #fff !important; border: none !important;
-    border-radius: 8px !important; font-weight: 600 !important;
-    padding: 12px !important; font-size:15px !important;
+    background: linear-gradient(135deg, #0f2744, #1a4a7a) !important;
+    color: #fff !important; border: none !important; border-radius: 8px !important;
+    font-weight: 600 !important; font-size: 14px !important;
+    box-shadow: 0 2px 8px rgba(15,39,68,.25) !important; padding: 12px !important;
   }
   [data-testid="stDownloadButton"] > button:hover {
-    background: linear-gradient(135deg,#163d5f,#1F4E79) !important; color:#fff !important;
+    background: linear-gradient(135deg, #0a1e35, #0f2744) !important;
+    box-shadow: 0 4px 12px rgba(15,39,68,.35) !important;
+    transform: translateY(-1px) !important;
   }
+
+  /* Inputs */
   [data-testid="stNumberInput"] label,
-  [data-testid="stDateInput"]   label { color:#374151 !important; font-weight:500 !important; }
+  [data-testid="stDateInput"]   label,
+  [data-testid="stFileUploader"] label {
+    color: #374151 !important; font-weight: 500 !important; font-size: 13px !important;
+  }
+  [data-testid="stFileUploader"] {
+    border: 2px dashed #d1d5db !important; border-radius: 10px !important;
+    background: #fafafa !important;
+  }
+
+  /* Divider */
+  hr { border-color: #e5e7eb !important; margin: 20px 0 !important; }
+
+  /* Headings */
+  h3 { color: #0f2744 !important; font-weight: 700 !important; font-size: 18px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Banner principal ───────────────────────────────────────────────────────────
+# ── Banner ─────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="main-banner">
-  <div class="main-banner-icon">🏢</div>
+<div class="banner">
+  <div class="banner-logo">🏢</div>
   <div>
-    <p class="main-banner-title">Contabilidad RM2</p>
-    <p class="main-banner-sub">Herramientas de conciliación y generación de plantillas contables</p>
+    <p class="banner-title">Contabilidad RM2</p>
+    <p class="banner-sub">Herramientas de conciliación y generación de plantillas contables</p>
   </div>
+  <div class="banner-badge">RM2 · Fondo Raiz</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1145,43 +1206,50 @@ if "modulo" not in st.session_state:
 
 col_n1, col_n2 = st.columns(2)
 with col_n1:
+    active = st.session_state["modulo"] == "conciliacion"
     if st.button("🔍  Conciliación", use_container_width=True,
-                 type="primary" if st.session_state["modulo"] == "conciliacion" else "secondary",
-                 key="nav_concil"):
+                 type="primary" if active else "secondary", key="nav_concil"):
         st.session_state["modulo"] = "conciliacion"
         st.rerun()
 with col_n2:
+    active = st.session_state["modulo"] == "contai"
     if st.button("📋  Actas Fondo — Contai", use_container_width=True,
-                 type="primary" if st.session_state["modulo"] == "contai" else "secondary",
-                 key="nav_contai"):
+                 type="primary" if active else "secondary", key="nav_contai"):
         st.session_state["modulo"] = "contai"
         st.rerun()
 
 modulo = st.session_state["modulo"]
 
-# ── Landing (sin módulo seleccionado) ─────────────────────────────────────────
+# ── Landing ────────────────────────────────────────────────────────────────────
 if modulo is None:
     st.markdown("""
-    <div style="text-align:center; padding:60px 0; color:#9ca3af;">
-      <div style="font-size:56px">👆</div>
-      <p style="font-size:18px; font-weight:600; color:#374151; margin-top:16px;">
-        Selecciona un módulo para comenzar
+    <div style="padding:48px 0 32px; text-align:center;">
+      <p style="font-size:40px;margin:0;">👋</p>
+      <p style="font-size:20px;font-weight:700;color:#0f2744;margin:14px 0 6px;">
+        Bienvenido a Contabilidad RM2
       </p>
-      <div style="display:flex; gap:32px; justify-content:center; margin-top:32px;">
-        <div style="background:#fff;border-radius:12px;padding:28px 36px;
-                    box-shadow:0 2px 8px rgba(0,0,0,.08);max-width:280px;text-align:left;">
-          <div style="font-size:32px">🔍</div>
-          <p style="font-size:17px;font-weight:700;color:#1F4E79;margin:10px 0 6px;">Conciliación</p>
-          <p style="font-size:13px;color:#6b7280;margin:0;">Verifica propietarios, tipo causa, IVA
-          y retenciones comparando el archivo de propietarios con contabilidad.</p>
-        </div>
-        <div style="background:#fff;border-radius:12px;padding:28px 36px;
-                    box-shadow:0 2px 8px rgba(0,0,0,.08);max-width:280px;text-align:left;">
-          <div style="font-size:32px">📋</div>
-          <p style="font-size:17px;font-weight:700;color:#1F4E79;margin:10px 0 6px;">Actas Fondo — Contai</p>
-          <p style="font-size:13px;color:#6b7280;margin:0;">Genera las planillas contables de ACTA
-          y COMISIONES desde el Movimiento Cta 28150501.</p>
-        </div>
+      <p style="font-size:14px;color:#6b7280;margin:0;">
+        Selecciona un módulo arriba para comenzar
+      </p>
+    </div>
+    <div style="display:flex;gap:20px;max-width:680px;margin:0 auto 48px;">
+      <div style="flex:1;background:#fff;border-radius:14px;padding:28px;
+                  box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #0f2744;">
+        <div style="font-size:28px;margin-bottom:12px;">🔍</div>
+        <p style="font-size:15px;font-weight:700;color:#0f2744;margin:0 0 8px;">Conciliación</p>
+        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
+          Verifica propietarios, tipo causa, IVA y retenciones cruzando el archivo
+          de propietarios con contabilidad.
+        </p>
+      </div>
+      <div style="flex:1;background:#fff;border-radius:14px;padding:28px;
+                  box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #2563ab;">
+        <div style="font-size:28px;margin-bottom:12px;">📋</div>
+        <p style="font-size:15px;font-weight:700;color:#0f2744;margin:0 0 8px;">Actas Fondo — Contai</p>
+        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
+          Genera las planillas contables de ACTA y COMISIONES desde el
+          Movimiento Cta 28150501.
+        </p>
       </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1313,8 +1381,8 @@ if modulo == "conciliacion":
 elif modulo == "contai":
     st.markdown("### 📋 Plantilla Acta RM2")
 
-    st.markdown('<div class="upload-card">', unsafe_allow_html=True)
-    st.markdown('<p class="section-title">📂 Archivo de movimientos</p>', unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-title">📂 Archivo de movimientos</p>', unsafe_allow_html=True)
     archivo = st.file_uploader(
         "Arrastra o selecciona · Movimiento Cta 28150501 RM2 -Fondo.xls",
         type=["xls","xlsx"],
@@ -1342,22 +1410,22 @@ elif modulo == "contai":
     n_fact = df_src[df_src["TipoCausa"].isin(TC_COMISIONES) & df_src["No. Transaccion"].notna()]["No. Transaccion"].nunique()
 
     st.markdown(f"""
-    <div class="metric-row">
-      <div class="metric-card" style="border-left-color:#1F4E79">
-        <div class="metric-label">Archivo cargado</div>
-        <div class="metric-value" style="font-size:16px;margin-top:6px;">✅ {archivo.name}</div>
+    <div class="kpi-row">
+      <div class="kpi" style="border-top-color:#0f2744;">
+        <div class="kpi-label">Archivo</div>
+        <div class="kpi-value" style="font-size:14px;margin-top:8px;font-weight:600;">✅ {archivo.name}</div>
       </div>
-      <div class="metric-card" style="border-left-color:#2E75B6">
-        <div class="metric-label">Filas ACTA</div>
-        <div class="metric-value">{n_acta:,}</div>
+      <div class="kpi" style="border-top-color:#2563ab;">
+        <div class="kpi-label">Filas ACTA</div>
+        <div class="kpi-value">{n_acta:,}</div>
       </div>
-      <div class="metric-card" style="border-left-color:#4CAF50">
-        <div class="metric-label">Filas Comisiones</div>
-        <div class="metric-value">{n_com:,}</div>
+      <div class="kpi" style="border-top-color:#16a34a;">
+        <div class="kpi-label">Filas Comisiones</div>
+        <div class="kpi-value">{n_com:,}</div>
       </div>
-      <div class="metric-card" style="border-left-color:#FF9800">
-        <div class="metric-label">Facturas únicas</div>
-        <div class="metric-value">{n_fact:,}</div>
+      <div class="kpi" style="border-top-color:#d97706;">
+        <div class="kpi-label">Facturas únicas</div>
+        <div class="kpi-value">{n_fact:,}</div>
       </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1365,8 +1433,8 @@ elif modulo == "contai":
     tab_acta, tab_com = st.tabs(["📋  Planilla ACTA", "💼  Planilla COMISIONES"])
 
     with tab_acta:
-        st.markdown('<div class="config-panel">', unsafe_allow_html=True)
-        st.markdown('<p class="section-title">⚙️ Parámetros del ACTA</p>', unsafe_allow_html=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<p class="card-title">⚙️ Parámetros del ACTA</p>', unsafe_allow_html=True)
         st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">El mismo Documento y Fecha se aplican a <strong>todas</strong> las filas. Canon va primero, Prediales/Admon al final.</p>', unsafe_allow_html=True)
         col_a1, col_a2 = st.columns(2)
         with col_a1:
@@ -1376,7 +1444,7 @@ elif modulo == "contai":
         fecha_acta_str = fecha_acta_dt.strftime("%m/%d/%Y")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div style="display:flex;gap:12px;margin-bottom:12px;"><span class="pill pill-blue">Canon · IVA · Retefte · Admon · EPM · Seguro · Prediales · Aseo · Rep. Locativas</span><span class="pill pill-green">Siempre CP</span></div>', unsafe_allow_html=True)
+        st.markdown('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="tag tag-blue">Canon · IVA · Retefte</span><span class="tag tag-blue">Admon · EPM · Seguro</span><span class="tag tag-blue">Prediales · Aseo · Rep. Locativas</span><span class="tag tag-green">Siempre CP</span></div>', unsafe_allow_html=True)
 
         if st.button("▶  Generar Planilla ACTA", type="primary", key="btn_acta", use_container_width=True):
             with st.spinner("Procesando ACTA…"):
@@ -1401,8 +1469,8 @@ elif modulo == "contai":
                                    use_container_width=True, type="primary", key="dl_acta")
 
     with tab_com:
-        st.markdown('<div class="config-panel">', unsafe_allow_html=True)
-        st.markdown('<p class="section-title">⚙️ Parámetros de COMISIONES</p>', unsafe_allow_html=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<p class="card-title">⚙️ Parámetros de COMISIONES</p>', unsafe_allow_html=True)
         st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Cada factura recibe su propio consecutivo. Contrapartida <strong>22050501</strong> automática. Reversiones usan comprobante <strong>DV</strong>.</p>', unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
@@ -1411,7 +1479,7 @@ elif modulo == "contai":
             cons_dv = st.number_input("Consecutivo inicial DV (reversiones)", min_value=1, value=26040001, step=1, key="cons_dv")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div style="display:flex;gap:12px;margin-bottom:12px;"><span class="pill pill-blue">Comisión · IVA Comisión · Retefte Comisión · Contrapartida 22050501</span><span class="pill pill-green">CP regulares · DV reversiones</span></div>', unsafe_allow_html=True)
+        st.markdown('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="tag tag-blue">Comisión · IVA Comisión · Retefte Comisión</span><span class="tag tag-gray">Contrapartida 22050501 automática</span><span class="tag tag-green">CP regulares · DV reversiones</span></div>', unsafe_allow_html=True)
 
         if st.button("▶  Generar Planilla COMISIONES", type="primary", key="btn_com", use_container_width=True):
             with st.spinner("Procesando Comisiones…"):
