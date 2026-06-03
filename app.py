@@ -1353,7 +1353,9 @@ st.markdown("""
     background: #f4f6f9 !important;
   }
   [data-testid="stSidebar"] { display: none; }
-  [data-testid="stMainBlockContainer"] { padding-top: 1.5rem !important; }
+  /* Padding superior suficiente para que el primer elemento (barra de
+     navegación) no quede oculto/recortado bajo el header fijo de Streamlit. */
+  [data-testid="stMainBlockContainer"] { padding-top: 4.5rem !important; }
 
   /* Banner */
   .banner {
