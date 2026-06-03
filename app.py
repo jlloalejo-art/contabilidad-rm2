@@ -1509,8 +1509,20 @@ st.markdown("""
   [data-testid="stMarkdownContainer"] td {
     color: #334155 !important;
   }
-  /* El banner conserva su texto blanco (tiene reglas propias con !important) */
-  .banner-title, .banner-sub, .banner-badge { /* sin cambios */ }
+  /* Banner — texto blanco (mayor especificidad que la regla general
+     [data-testid="stMarkdownContainer"] p para que no lo sobrescriba) */
+  [data-testid="stMarkdownContainer"] .banner-title { color: #fff !important; }
+  [data-testid="stMarkdownContainer"] .banner-sub   { color: rgba(255,255,255,.85) !important; }
+  [data-testid="stMarkdownContainer"] .banner-badge { color: rgba(255,255,255,.92) !important; }
+
+  /* Texto de botones (la etiqueta va en un <p> dentro de stMarkdownContainer,
+     por eso la regla general lo dejaba oscuro sobre fondo navy) */
+  [data-testid="stButton"] > button[kind="primary"] p,
+  [data-testid="stButton"] > button[kind="primary"] span,
+  [data-testid="stDownloadButton"] > button p,
+  [data-testid="stDownloadButton"] > button span { color: #fff !important; }
+  [data-testid="stButton"] > button[kind="secondary"] p,
+  [data-testid="stButton"] > button[kind="secondary"] span { color: #374151 !important; }
 
   /* Subtítulos / captions legibles */
   [data-testid="stCaptionContainer"], small { color: #64748b !important; }
