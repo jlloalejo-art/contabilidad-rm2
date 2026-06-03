@@ -1768,6 +1768,22 @@ Genera el informe **actualizado** de propietarios.
 elif modulo == "contai":
     st.markdown("### 📋 Plantilla Contai")
 
+    with st.expander("📥 ¿Cómo descargar el archivo de movimientos?"):
+        st.markdown(
+            """
+**Ruta:** `Módulo Contabilidad` → `Análisis e Informes` → `Auxiliares`
+
+Activa los siguientes campos:
+
+1. **Fecha inicial** y **Fecha final** del periodo.
+2. **Cuenta:** **`28150501`**
+3. **Selecciona todas las opciones / columnas** disponibles.
+4. Descarga en **Excel** (`.xls` o `.xlsx`).
+
+> ℹ️ No es necesario filtrar por NIT: el **propietario se elige dentro del aplicativo**.
+            """
+        )
+
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown('<p class="card-title">📂 Archivo de movimientos</p>', unsafe_allow_html=True)
     archivo = st.file_uploader(
