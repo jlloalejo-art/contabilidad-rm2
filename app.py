@@ -1890,13 +1890,12 @@ Activa los siguientes campos:
             """
         )
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-title">📂 Archivo de movimientos</p>', unsafe_allow_html=True)
-    archivo = st.file_uploader(
-        "Arrastra o selecciona · Movimiento Cta 28150501 RM2 -Fondo.xls",
-        type=["xls","xlsx"],
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<p class="card-title">📂 Archivo de movimientos</p>', unsafe_allow_html=True)
+        archivo = st.file_uploader(
+            "Arrastra o selecciona · Movimiento Cta 28150501 RM2 -Fondo.xls",
+            type=["xls","xlsx"],
+        )
 
     if not archivo:
         st.markdown("""
@@ -1927,14 +1926,13 @@ Activa los siguientes campos:
         for _, r in owners.iterrows()
     }
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-title">👤 Propietario</p>', unsafe_allow_html=True)
-    sel_prop = st.selectbox(
-        "Propietario al que se le genera la plantilla",
-        opciones,
-        help="Filtra los movimientos por NIT / Nombre Tercero antes de generar las planillas",
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<p class="card-title">👤 Propietario</p>', unsafe_allow_html=True)
+        sel_prop = st.selectbox(
+            "Propietario al que se le genera la plantilla",
+            opciones,
+            help="Filtra los movimientos por NIT / Nombre Tercero antes de generar las planillas",
+        )
 
     if sel_prop != "Todos los propietarios":
         nit_sel = nit_por_opcion[sel_prop]
@@ -1968,16 +1966,15 @@ Activa los siguientes campos:
     tab_acta, tab_com = st.tabs(["📋  Planilla ACTA", "💼  Planilla COMISIONES"])
 
     with tab_acta:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-title">⚙️ Parámetros del ACTA</p>', unsafe_allow_html=True)
-        st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">El mismo Documento y Fecha se aplican a <strong>todas</strong> las filas. Canon va primero, Prediales/Admon al final.</p>', unsafe_allow_html=True)
-        col_a1, col_a2 = st.columns(2)
-        with col_a1:
-            doc_acta = st.number_input("Consecutivo Documento", min_value=1, value=26040185, step=1, key="doc_acta")
-        with col_a2:
-            fecha_acta_dt = st.date_input("Fecha del ACTA", value=datetime.date(2026, 4, 30), key="fecha_acta")
-        fecha_acta_str = fecha_acta_dt.strftime("%m/%d/%Y")
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown('<p class="card-title">⚙️ Parámetros del ACTA</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">El mismo Documento y Fecha se aplican a <strong>todas</strong> las filas. Canon va primero, Prediales/Admon al final.</p>', unsafe_allow_html=True)
+            col_a1, col_a2 = st.columns(2)
+            with col_a1:
+                doc_acta = st.number_input("Consecutivo Documento", min_value=1, value=26040185, step=1, key="doc_acta")
+            with col_a2:
+                fecha_acta_dt = st.date_input("Fecha del ACTA", value=datetime.date(2026, 4, 30), key="fecha_acta")
+            fecha_acta_str = fecha_acta_dt.strftime("%m/%d/%Y")
 
         st.markdown('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="tag tag-blue">Canon · IVA · Retefte</span><span class="tag tag-blue">Admon · EPM · Seguro</span><span class="tag tag-blue">Prediales · Aseo · Rep. Locativas</span><span class="tag tag-green">Siempre CP</span></div>', unsafe_allow_html=True)
 
@@ -2004,15 +2001,14 @@ Activa los siguientes campos:
                                    use_container_width=True, type="primary", key="dl_acta")
 
     with tab_com:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-title">⚙️ Parámetros de COMISIONES</p>', unsafe_allow_html=True)
-        st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Cada factura recibe su propio consecutivo. Contrapartida <strong>22050501</strong> automática. Reversiones usan comprobante <strong>DV</strong>.</p>', unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            cons_cp = st.number_input("Consecutivo inicial CP (regulares)", min_value=1, value=26040186, step=1, key="cons_cp")
-        with col2:
-            cons_dv = st.number_input("Consecutivo inicial DV (reversiones)", min_value=1, value=26040001, step=1, key="cons_dv")
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown('<p class="card-title">⚙️ Parámetros de COMISIONES</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size:13px;color:#6b7280;margin-bottom:16px;">Cada factura recibe su propio consecutivo. Contrapartida <strong>22050501</strong> automática. Reversiones usan comprobante <strong>DV</strong>.</p>', unsafe_allow_html=True)
+            col1, col2 = st.columns(2)
+            with col1:
+                cons_cp = st.number_input("Consecutivo inicial CP (regulares)", min_value=1, value=26040186, step=1, key="cons_cp")
+            with col2:
+                cons_dv = st.number_input("Consecutivo inicial DV (reversiones)", min_value=1, value=26040001, step=1, key="cons_dv")
 
         st.markdown('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="tag tag-blue">Comisión · IVA Comisión · Retefte Comisión</span><span class="tag tag-gray">Contrapartida 22050501 automática</span><span class="tag tag-green">CP regulares · DV reversiones</span></div>', unsafe_allow_html=True)
 
