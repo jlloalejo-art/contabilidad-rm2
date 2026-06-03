@@ -1371,14 +1371,14 @@ st.markdown("""
     border-radius: 12px; display: flex; align-items: center;
     justify-content: center; font-size: 28px; flex-shrink: 0;
   }
-  .banner-title { font-size: 26px; font-weight: 800; color: #fff;
+  .banner-title { font-size: 26px; font-weight: 800; color: #fff !important;
                   margin: 0; letter-spacing: -0.3px; }
-  .banner-sub   { font-size: 13px; color: rgba(255,255,255,.6);
+  .banner-sub   { font-size: 13px; color: rgba(255,255,255,.75) !important;
                   margin: 3px 0 0 0; font-weight: 400; }
   .banner-badge {
     margin-left: auto; background: rgba(255,255,255,.12);
     border: 1px solid rgba(255,255,255,.2); border-radius: 20px;
-    padding: 4px 14px; font-size: 12px; color: rgba(255,255,255,.8);
+    padding: 4px 14px; font-size: 12px; color: rgba(255,255,255,.85) !important;
     font-weight: 500; white-space: nowrap;
   }
 
@@ -1500,7 +1500,76 @@ st.markdown("""
   hr { border-color: #e5e7eb !important; margin: 20px 0 !important; }
 
   /* Headings */
-  h3 { color: #0f2744 !important; font-weight: 700 !important; font-size: 18px !important; }
+  h1, h2, h3, h4, h5 { color: #0f2744 !important; font-weight: 700 !important; }
+  h3 { font-size: 18px !important; }
+
+  /* Texto general — alto contraste (slate) */
+  [data-testid="stMarkdownContainer"] p,
+  [data-testid="stMarkdownContainer"] li,
+  [data-testid="stMarkdownContainer"] td {
+    color: #334155 !important;
+  }
+  /* El banner conserva su texto blanco (tiene reglas propias con !important) */
+  .banner-title, .banner-sub, .banner-badge { /* sin cambios */ }
+
+  /* Subtítulos / captions legibles */
+  [data-testid="stCaptionContainer"], small { color: #64748b !important; }
+
+  /* Etiquetas de widgets */
+  label, [data-testid="stWidgetLabel"] p {
+    color: #334155 !important; font-weight: 600 !important;
+  }
+
+  /* Expanders — fondo blanco, borde slate, texto oscuro */
+  [data-testid="stExpander"] {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(15,39,68,.06) !important;
+    overflow: hidden;
+  }
+  [data-testid="stExpander"] summary {
+    background: #f8fafc !important;
+    color: #0f2744 !important;
+    font-weight: 600 !important;
+  }
+  [data-testid="stExpander"] summary:hover { background: #eef2f7 !important; }
+  [data-testid="stExpander"] summary svg { fill: #0f2744 !important; }
+  [data-testid="stExpander"] p,
+  [data-testid="stExpander"] li,
+  [data-testid="stExpander"] strong,
+  [data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {
+    color: #334155 !important;
+  }
+  [data-testid="stExpander"] h1, [data-testid="stExpander"] h2,
+  [data-testid="stExpander"] h3, [data-testid="stExpander"] h4 {
+    color: #0f2744 !important;
+  }
+  /* blockquote (notas ℹ️) */
+  [data-testid="stExpander"] blockquote {
+    border-left: 3px solid #2563ab !important;
+    background: #f1f5f9 !important; border-radius: 6px;
+    padding: 6px 12px !important; color: #334155 !important;
+  }
+  /* Código inline (rutas, cuentas) — chip claro legible */
+  code {
+    background: #eef2f7 !important; color: #0f2744 !important;
+    border: 1px solid #dbe3ec !important; border-radius: 5px !important;
+    padding: 1px 6px !important; font-weight: 600 !important;
+  }
+
+  /* File uploader — claro y legible */
+  [data-testid="stFileUploaderDropzone"] {
+    background: #f8fafc !important; color: #334155 !important;
+  }
+  [data-testid="stFileUploaderDropzone"] * { color: #334155 !important; }
+
+  /* Métricas */
+  [data-testid="stMetricValue"] { color: #0f2744 !important; }
+  [data-testid="stMetricLabel"] { color: #64748b !important; }
+
+  /* DataFrames con borde suave */
+  [data-testid="stDataFrame"] { border: 1px solid #e2e8f0 !important; border-radius: 8px; }
 </style>
 """, unsafe_allow_html=True)
 

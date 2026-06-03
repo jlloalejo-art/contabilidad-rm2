@@ -1,0 +1,9 @@
+# Tema fijo (claro) para que el aplicativo se vea igual sin importar el modo
+# claro/oscuro del navegador. Paleta profesional navy + slate (alto contraste).
+[theme]
+base = "light"
+primaryColor = "#1a4a7a"          # navy — botones y elementos interactivos
+backgroundColor = "#f4f6f9"       # gris muy claro (página)
+secondaryBackgroundColor = "#ffffff"  # blanco (tarjetas, inputs, expanders)
+textColor = "#1f2937"             # slate-800 — texto de alto contraste
+font = "sans serif"
