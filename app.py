@@ -1585,79 +1585,88 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Banner ─────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="banner">
-  <div class="banner-logo">🏢</div>
-  <div>
-    <p class="banner-title">Contabilidad RM2</p>
-    <p class="banner-sub">Herramientas de conciliación y generación de plantillas contables</p>
-  </div>
-  <div class="banner-badge">RM2 · Fondo Raiz</div>
-</div>
-""", unsafe_allow_html=True)
-
 # ── Navegación ─────────────────────────────────────────────────────────────────
 if "modulo" not in st.session_state:
     st.session_state["modulo"] = None
 
-col_n1, col_n2 = st.columns(2)
-with col_n1:
-    active = st.session_state["modulo"] == "conciliacion"
-    if st.button("🔍  Conciliación", use_container_width=True,
-                 type="primary" if active else "secondary", key="nav_concil"):
-        st.session_state["modulo"] = "conciliacion"
-        st.rerun()
-with col_n2:
-    active = st.session_state["modulo"] == "contai"
-    if st.button("📋  Actas Fondo — Contai", use_container_width=True,
-                 type="primary" if active else "secondary", key="nav_contai"):
-        st.session_state["modulo"] = "contai"
-        st.rerun()
+def _nav_bar(current):
+    """Barra superior dentro de cada módulo: volver al inicio o cambiar de aplicativo."""
+    c1, c2, _ = st.columns([1.3, 2.4, 4])
+    with c1:
+        if st.button("← Inicio", key=f"back_{current}", use_container_width=True):
+            st.session_state["modulo"] = None
+            st.rerun()
+    with c2:
+        if current == "conciliacion":
+            if st.button("📋  Ir a Actas Fondo — Contai", key="switch_contai",
+                         use_container_width=True):
+                st.session_state["modulo"] = "contai"
+                st.rerun()
+        else:
+            if st.button("🔍  Ir a Conciliación", key="switch_concil",
+                         use_container_width=True):
+                st.session_state["modulo"] = "conciliacion"
+                st.rerun()
 
 modulo = st.session_state["modulo"]
 
 # ── Landing ────────────────────────────────────────────────────────────────────
 if modulo is None:
     st.markdown("""
-    <div style="padding:48px 0 32px; text-align:center;">
-      <p style="font-size:40px;margin:0;">👋</p>
-      <p style="font-size:20px;font-weight:700;color:#0f2744;margin:14px 0 6px;">
-        Bienvenido a Contabilidad RM2
+    <div style="padding:40px 0 28px; text-align:center;">
+      <p style="font-size:40px;margin:0;">🏢</p>
+      <p style="font-size:22px;font-weight:800;color:#0f2744;margin:14px 0 6px;">
+        Contabilidad RM2
       </p>
       <p style="font-size:14px;color:#6b7280;margin:0;">
-        Selecciona un módulo arriba para comenzar
+        Selecciona un módulo para comenzar
       </p>
     </div>
-    <div style="display:flex;gap:20px;max-width:680px;margin:0 auto 48px;">
-      <div style="flex:1;background:#fff;border-radius:14px;padding:28px;
-                  box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #0f2744;">
-        <div style="font-size:28px;margin-bottom:12px;">🔍</div>
-        <p style="font-size:15px;font-weight:700;color:#0f2744;margin:0 0 8px;">Conciliación</p>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
-          Verifica propietarios, tipo causa, IVA y retenciones cruzando el archivo
-          de propietarios con contabilidad.
-        </p>
-      </div>
-      <div style="flex:1;background:#fff;border-radius:14px;padding:28px;
-                  box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #2563ab;">
-        <div style="font-size:28px;margin-bottom:12px;">📋</div>
-        <p style="font-size:15px;font-weight:700;color:#0f2744;margin:0 0 8px;">Actas Fondo — Contai</p>
-        <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
-          Genera las planillas contables de ACTA y COMISIONES desde el
-          Movimiento Cta 28150501.
-        </p>
-      </div>
-    </div>
     """, unsafe_allow_html=True)
-    st.stop()
 
-st.divider()
+    col_c1, col_c2 = st.columns(2, gap="large")
+    with col_c1:
+        st.markdown("""
+        <div style="background:#fff;border-radius:14px;padding:28px 28px 16px;
+                    box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #0f2744;
+                    min-height:170px;">
+          <div style="font-size:30px;margin-bottom:10px;">🔍</div>
+          <p style="font-size:16px;font-weight:700;color:#0f2744;margin:0 0 8px;">Conciliación</p>
+          <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
+            Verifica propietarios, tipo causa, IVA y retenciones cruzando el archivo
+            de propietarios con contabilidad.
+          </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Abrir Conciliación", key="open_concil", type="primary",
+                     use_container_width=True):
+            st.session_state["modulo"] = "conciliacion"
+            st.rerun()
+    with col_c2:
+        st.markdown("""
+        <div style="background:#fff;border-radius:14px;padding:28px 28px 16px;
+                    box-shadow:0 2px 12px rgba(0,0,0,.08);border-top:4px solid #2563ab;
+                    min-height:170px;">
+          <div style="font-size:30px;margin-bottom:10px;">📋</div>
+          <p style="font-size:16px;font-weight:700;color:#0f2744;margin:0 0 8px;">Actas Fondo — Contai</p>
+          <p style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;">
+            Genera las planillas contables de ACTA y COMISIONES desde el
+            Movimiento Cta 28150501.
+          </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Abrir Actas Fondo — Contai", key="open_contai", type="primary",
+                     use_container_width=True):
+            st.session_state["modulo"] = "contai"
+            st.rerun()
+    st.stop()
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MÓDULO: CONCILIACIÓN
 # ══════════════════════════════════════════════════════════════════════════════
 if modulo == "conciliacion":
+    _nav_bar("conciliacion")
+    st.divider()
     st.markdown("### 🔍 Conciliación RM2")
     st.markdown("Sube los archivos y haz clic en **Conciliar** para generar el reporte.")
 
@@ -1847,6 +1856,8 @@ Genera el informe **actualizado** de propietarios.
 # MÓDULO: ACTAS FONDO — CONTAI
 # ══════════════════════════════════════════════════════════════════════════════
 elif modulo == "contai":
+    _nav_bar("contai")
+    st.divider()
     st.markdown("### 📋 Plantilla Contai")
 
     with st.expander("📥 ¿Cómo descargar el archivo de movimientos?"):
