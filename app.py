@@ -1449,18 +1449,30 @@ st.markdown("""
   }
   [data-testid="stTab"] p, [data-testid="stTab"] span { color: inherit !important; }
 
-  /* Botones — altura/padding consistentes para que el texto no se recorte */
+  /* Botones — centrado vertical real para que el texto no se recorte.
+     La etiqueta de Streamlit va en un contenedor interno; forzamos
+     inline-flex + align-items:center en el botón y su wrapper. */
   [data-testid="stButton"] > button,
   [data-testid="stDownloadButton"] > button {
     min-height: 44px !important; height: auto !important;
-    padding: 10px 16px !important; line-height: 1.3 !important;
+    padding: 8px 16px !important; line-height: 1.2 !important;
     white-space: nowrap !important; overflow: visible !important;
+    display: inline-flex !important;
+    align-items: center !important; justify-content: center !important;
+  }
+  [data-testid="stButton"] > button > div,
+  [data-testid="stButton"] > button [data-testid="stMarkdownContainer"],
+  [data-testid="stDownloadButton"] > button > div,
+  [data-testid="stDownloadButton"] > button [data-testid="stMarkdownContainer"] {
+    display: flex !important;
+    align-items: center !important; justify-content: center !important;
+    line-height: 1.2 !important;
   }
   [data-testid="stButton"] > button p,
   [data-testid="stButton"] > button span,
   [data-testid="stDownloadButton"] > button p,
   [data-testid="stDownloadButton"] > button span {
-    margin: 0 !important; line-height: 1.3 !important;
+    margin: 0 !important; padding: 0 !important; line-height: 1.2 !important;
   }
 
   /* Botones primarios Streamlit */
