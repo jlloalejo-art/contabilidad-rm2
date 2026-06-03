@@ -1578,18 +1578,64 @@ st.divider()
 # ══════════════════════════════════════════════════════════════════════════════
 if modulo == "conciliacion":
     st.markdown("### 🔍 Conciliación RM2")
-    st.markdown("Sube los tres archivos y haz clic en **Conciliar** para generar el reporte.")
+    st.markdown("Sube los archivos y haz clic en **Conciliar** para generar el reporte.")
 
-    col1, col2, col3 = st.columns(3)
+    with st.expander("📥 ¿Cómo descargar los archivos del sistema?"):
+        st.markdown(
+            """
+### 1. Auxiliar 28150501
+
+**Ruta:** `Módulo Contabilidad` → `Análisis e Informes` → `Auxiliares`
+
+1. Activa el rango de fechas: **Fecha inicial** y **Fecha final** del periodo a conciliar.
+2. En **Cuenta**, ingresa: **`28150501`**
+3. Activa **todos los filtros (columnas)** disponibles para que el reporte
+   incluya toda la información necesaria (NIT, nombre tercero, detalle,
+   débito, crédito, número de inmueble, tipo de causa, etc.).
+4. Genera y exporta el reporte a Excel (`.xls` o `.xlsx`).
+
+> ℹ️ Asegúrate de exportar con **todas las columnas activas**; si falta alguna,
+> la conciliación puede arrojar resultados incompletos.
+
+### 2. Informe actualizado de Propietarios
+
+Genera el informe **actualizado** de propietarios.
+
+**Ruta:** `Módulo de Arriendos` → `Elaboración de Contratos`
+
+1. **Activa todos** los filtros / columnas disponibles.
+2. **Envía a Excel** para exportar el reporte (`.xls` o `.xlsx`).
+            """
+        )
+
+    col1, col2 = st.columns(2)
     with col1:
         f_prop = st.file_uploader("📋 Propietarios RM2", type=["xls","xlsx"],
-                                  help="Archivo PROPIETARIOS RM2 CORTE ABRIL 30")
+                                  help="Informe actualizado de Propietarios (todas las columnas)")
     with col2:
-        f_cont = st.file_uploader("📒 Contabilidad RM2", type=["xls","xlsx"],
-                                  help="Archivo 28150501CONTABILIDAD RM2")
-    with col3:
-        f_tc = st.file_uploader("📄 Tipo Causa (opcional)", type=["xls","xlsx"],
-                                help="Archivo TIPO CAUSA. Si no lo subes, se usa el catálogo establecido.")
+        f_cont = st.file_uploader("📒 Auxiliar 28150501", type=["xls","xlsx"],
+                                  help="Auxiliar original de la cuenta 28150501 (todas las columnas)")
+
+    # ── Tipo Causa: catálogo establecido (opcional actualizar) ──────────────────
+    f_tc = None
+    actualizar_tc = st.checkbox(
+        "🔄 Actualizar catálogo de Tipo Causa",
+        help="Por defecto se usa el catálogo establecido. Actívalo solo si los Tipo Causa cambiaron."
+    )
+    if actualizar_tc:
+        f_tc = st.file_uploader("📄 Tipo Causa (nuevo catálogo)", type=["xls","xlsx"],
+                                help="Sube el archivo TIPO CAUSA actualizado")
+        if f_tc is None:
+            st.warning("Sube el archivo de Tipo Causa o desactiva la casilla para usar el catálogo establecido.")
+    else:
+        st.caption(f"✅ Usando el catálogo de Tipo Causa establecido ({len(DEFAULT_TIPO_CAUSA)} conceptos).")
+        with st.expander("Ver catálogo establecido"):
+            st.dataframe(
+                pd.DataFrame(
+                    [{"Tipo Causa": k, "Concepto Contabilidad": v} for k, v in DEFAULT_TIPO_CAUSA.items()]
+                ),
+                hide_index=True, use_container_width=True
+            )
 
     st.divider()
 
