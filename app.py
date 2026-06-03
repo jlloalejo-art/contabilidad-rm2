@@ -1449,6 +1449,20 @@ st.markdown("""
   }
   [data-testid="stTab"] p, [data-testid="stTab"] span { color: inherit !important; }
 
+  /* Botones — altura/padding consistentes para que el texto no se recorte */
+  [data-testid="stButton"] > button,
+  [data-testid="stDownloadButton"] > button {
+    min-height: 44px !important; height: auto !important;
+    padding: 10px 16px !important; line-height: 1.3 !important;
+    white-space: nowrap !important; overflow: visible !important;
+  }
+  [data-testid="stButton"] > button p,
+  [data-testid="stButton"] > button span,
+  [data-testid="stDownloadButton"] > button p,
+  [data-testid="stDownloadButton"] > button span {
+    margin: 0 !important; line-height: 1.3 !important;
+  }
+
   /* Botones primarios Streamlit */
   [data-testid="stButton"] > button[kind="primary"] {
     background: linear-gradient(135deg, #0f2744, #1a4a7a) !important;
