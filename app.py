@@ -520,6 +520,14 @@ def run_conciliacion(f_prop, f_cont, f_tc=None):
 
 
 # ── Generar Excel ──────────────────────────────────────────────────────────────
+def _sanitize(v):
+    """Remove illegal XML/Excel characters from string values."""
+    if not isinstance(v, str):
+        return v
+    import re
+    # Remove control chars except tab (\x09), newline (\x0a), carriage return (\x0d)
+    return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', v)
+
 def build_excel(df_v1, df_v2, df_v3, crosscheck, analisis):
     wb  = openpyxl.Workbook()
 
@@ -660,7 +668,7 @@ def build_excel(df_v1, df_v2, df_v3, crosscheck, analisis):
     else:
         for ri, rw in df_sc.iterrows():
             r = r0 + 2 + ri
-            for ci, v in enumerate([rw["inm"], rw["nit"], rw["nombre_cont"], rw["detalle"], rw["neto"]], 1):
+            for ci, v in enumerate([rw["inm"], rw["nit"], _sanitize(rw["nombre_cont"]), _sanitize(rw["detalle"]), rw["neto"]], 1):
                 ws.cell(r, ci, v).font = Font(name="Arial", size=9)
             ws.cell(r, 5).number_format = FMT_NUM
             ws.cell(r, 5).alignment = Alignment(horizontal="right")
@@ -841,7 +849,7 @@ def build_excel(df_v1, df_v2, df_v3, crosscheck, analisis):
     al_col = 7
     for ri, row in df_v1.iterrows():
         r = ri + 3
-        for ci, s in enumerate(src1, 1): ws1.cell(r, ci, row[s])
+        for ci, s in enumerate(src1, 1): ws1.cell(r, ci, _sanitize(row[s]))
         _row(ws1, r, len(cols1), C_ALT if ri%2==0 else None)
         ec = ws1.cell(r, ec_col)
         st = row["Estado"]
@@ -881,7 +889,7 @@ def build_excel(df_v1, df_v2, df_v3, crosscheck, analisis):
     ec2 = cols2.index("Estado") + 1
     for ri, row in df_v2.iterrows():
         r = ri + 3
-        for ci, s in enumerate(src2, 1): ws2.cell(r, ci, row[s])
+        for ci, s in enumerate(src2, 1): ws2.cell(r, ci, _sanitize(row[s]))
         _row(ws2, r, len(cols2), C_ALT if ri%2==0 else None)
         ec = ws2.cell(r, ec2)
         if row["Estado"] == "CORRECTO":
