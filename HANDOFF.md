@@ -117,8 +117,9 @@ TC_EXCLUIR    = {0,16,40}
 - **UI**: tema claro fijo, paleta navy (`#1a4a7a` / `#0f2744`), fuente Inter, landing con tarjetas-botón por módulo, KPI cards.
 - **Validación de exactitud**: ACTA 595 filas = 595 de referencia; COMISIONES 528 = 528. Archivos de mayo (CANON/OTROS) también confirmados 100%.
 
+  5. **Contai — lectura de columnas robusta**: `df_src["TipoCausa"]` (y demás) tumbaba la app con `KeyError` si el export traía encabezados con variaciones. Ahora, tras leer el archivo, se normalizan los encabezados por nombre (`_col_contai`, con variantes de acentos/espacios) y si falta una columna esencial se muestra un `st.error` claro con las columnas encontradas en vez de crashear (línea ~1968).
+
 ### Tareas conocidas pendientes (revisión de código, aún sin abordar)
-- **Contai**: `df_src[...]` asume nombres de columna exactos sin fallback ni manejo de `KeyError` (línea ~1936). Convendría reusar el enfoque `_find_col`.
 - **Parseo de dinero** (`parse_money`/`parse_valor`): asume formato US (coma miles, punto decimal); con formato colombiano `1.234.567,89` devuelve 0 en silencio.
 - Menores: título del Excel de conciliación hardcodeado "CORTE ABRIL 2026" (línea ~539); `No. Inmueble` se muestra como flotante (`101.0`).
 

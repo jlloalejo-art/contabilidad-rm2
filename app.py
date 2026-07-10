@@ -1965,6 +1965,54 @@ Activa los siguientes campos:
         st.error(f"Error al leer el archivo: {e}")
         st.stop()
 
+    # ── Normalización de encabezados ─────────────────────────────────────────────
+    # El export puede traer los nombres con variaciones (acentos, espacios,
+    # mayúsculas). Se mapea cada columna esperada a la real por nombre para no
+    # depender del texto exacto y evitar un KeyError que tumba la app.
+    _hdr_map = {str(c).strip().lower(): c for c in df_src.columns}
+
+    def _col_contai(*names):
+        for nm in names:                       # coincidencia exacta
+            if nm.lower() in _hdr_map:
+                return _hdr_map[nm.lower()]
+        for nm in names:                       # coincidencia parcial
+            for h_low, h_orig in _hdr_map.items():
+                if nm.lower() in h_low:
+                    return h_orig
+        return None
+
+    _requeridas = {
+        "TipoCausa":       ("tipocausa", "tipo causa", "tipo de causa"),
+        "No. Transaccion": ("no. transaccion", "no transaccion", "no. transacción",
+                            "numero transaccion", "nro transaccion", "transaccion"),
+        "Nit":             ("nit",),
+        "Nombre Tercero":  ("nombre tercero", "tercero", "nombre"),
+        "Debito":          ("debito", "débito"),
+        "Credito":         ("credito", "crédito"),
+        "Valor Base":      ("valor base", "base"),
+        "Fecha":           ("fecha",),
+        "Detalle":         ("detalle", "descripcion", "descripción", "concepto"),
+    }
+    _rename, _faltan = {}, []
+    for _canon, _alias in _requeridas.items():
+        _encontrada = _col_contai(_canon, *_alias)
+        if _encontrada is None:
+            _faltan.append(_canon)
+        elif _encontrada != _canon:
+            _rename[_encontrada] = _canon
+    if _faltan:
+        st.error(
+            "El archivo no tiene las columnas esperadas: "
+            + ", ".join(f"**{c}**" for c in _faltan)
+            + ".\n\nColumnas encontradas: "
+            + ", ".join(str(c) for c in df_src.columns)
+            + ".\n\nRevisa que hayas exportado el Auxiliar 28150501 con "
+            "**todas las columnas activas**."
+        )
+        st.stop()
+    if _rename:
+        df_src = df_src.rename(columns=_rename)
+
     df_src["TipoCausa"] = pd.to_numeric(df_src["TipoCausa"], errors="coerce")
 
     # ── Selección de propietario (NIT / Nombre Tercero) ──────────────────────────
