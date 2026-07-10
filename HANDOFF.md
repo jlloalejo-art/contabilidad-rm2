@@ -108,12 +108,19 @@ TC_EXCLUIR    = {0,16,40}
 
 ## 5. Estado actual / último trabajo
 
-- **Última corrección (commit `2ad914c`)**: `IllegalCharacterError` de openpyxl al descargar el Excel. Causa: el `.xls` fuente traía caracteres de control (`\x00`, `\x0b`, etc.) en columnas de texto. Se agregó `_sanitize()` (línea ~523) que los elimina, aplicado en las escrituras de celda con texto de DataFrame (`src1`, `src2`, `nombre_cont`, `detalle`).
+- **Últimas correcciones (julio 2026)**:
+  1. **`IllegalCharacterError` también en el módulo Contai**: `generar_excel()` escribía el texto crudo del `.xls` (columna Detalle con caracteres de control) sin pasar por `_sanitize()` — fallaba la descarga de las plantillas ACTA y COMISIONES. Se aplicó `_sanitize()` a cada celda en `generar_excel()` (línea ~1334). Esto cierra el punto 1 de "Cosas a vigilar": ahora *ambos* módulos sanitizan.
+  2. **Conciliación — filtros borraban el reporte**: el resultado vivía dentro de `if st.button("▶ Conciliar")`; al usar un filtro (rerun con botón en `False`) desaparecía todo. Ahora el resultado se guarda en `st.session_state["concil_result"]` y se renderiza fuera del `if` (línea ~1768).
+  3. **Propietarios — lectura frágil**: `prop[prop[12] == 'False']` solo aceptaba el texto `'False'` (fallo silencioso si el export traía booleano) y columnas por posición fija. Ahora hay `_find_prop_col()` (busca por encabezado, respaldo posicional) y `_es_activo()` (acepta texto o booleano) — línea ~224.
+  4. **`requirements.txt`**: piso de pandas subido a `>=2.2.0` (el código usa `include_groups=False`, disponible desde 2.2).
+- **Corrección previa (commit `2ad914c`)**: `IllegalCharacterError` en el módulo Conciliación. Se agregó `_sanitize()` (línea ~523) aplicado a `src1`, `src2`, `nombre_cont`, `detalle`.
 - **UI**: tema claro fijo, paleta navy (`#1a4a7a` / `#0f2744`), fuente Inter, landing con tarjetas-botón por módulo, KPI cards.
 - **Validación de exactitud**: ACTA 595 filas = 595 de referencia; COMISIONES 528 = 528. Archivos de mayo (CANON/OTROS) también confirmados 100%.
 
-### Sin tareas abiertas
-No hay tareas pendientes explícitas. El árbol de git está limpio y todo está pusheado a `main`.
+### Tareas conocidas pendientes (revisión de código, aún sin abordar)
+- **Contai**: `df_src[...]` asume nombres de columna exactos sin fallback ni manejo de `KeyError` (línea ~1936). Convendría reusar el enfoque `_find_col`.
+- **Parseo de dinero** (`parse_money`/`parse_valor`): asume formato US (coma miles, punto decimal); con formato colombiano `1.234.567,89` devuelve 0 en silencio.
+- Menores: título del Excel de conciliación hardcodeado "CORTE ABRIL 2026" (línea ~539); `No. Inmueble` se muestra como flotante (`101.0`).
 
 ---
 

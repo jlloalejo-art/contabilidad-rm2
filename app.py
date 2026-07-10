@@ -224,8 +224,35 @@ def _widths(ws, widths):
 def run_conciliacion(f_prop, f_cont, f_tc=None):
     # --- Propietarios activos ---
     df_p = pd.read_excel(f_prop, header=None)
+    hdr_p = df_p.iloc[0].astype(str).str.strip().str.lower()
+
+    def _find_prop_col(default, *names):
+        """Localiza una columna del archivo de Propietarios por nombre de
+        encabezado; si no la encuentra, cae a la posición fija histórica."""
+        for nm in names:                      # coincidencia exacta
+            for i, h in hdr_p.items():
+                if h == nm.lower():
+                    return i
+        for nm in names:                      # coincidencia parcial
+            for i, h in hdr_p.items():
+                if nm.lower() in h:
+                    return i
+        return default
+
+    col_exprop = _find_prop_col(12, "ex prop", "ex propietario", "exprop")
+    col_inm    = _find_prop_col(2,  "no. inm", "no inm", "inmueble", "inm")
+    col_nomp   = _find_prop_col(13, "propietario", "nombre propietario", "nombre")
+    col_cedp   = _find_prop_col(14, "cedula", "cédula", "nit", "identificacion", "documento")
+
+    def _es_activo(v):
+        """Activo = NO es ex-propietario. Acepta el valor tanto si viene como
+        texto ('False', 'FALSO', 'No') como si viene booleano (False)."""
+        if pd.isna(v):
+            return False
+        return str(v).strip().lower() in ("false", "falso", "no", "0", "0.0", "n")
+
     prop = df_p.iloc[1:]
-    actv = prop[prop[12] == 'False'][[2, 13, 14]].copy()
+    actv = prop[prop[col_exprop].map(_es_activo)][[col_inm, col_nomp, col_cedp]].copy()
     actv.columns = ["inm", "nombre_prop", "cedula_prop"]
     actv["inm"]         = actv["inm"].astype(str).str.strip()
     actv["nombre_prop"] = actv["nombre_prop"].astype(str).str.strip().str.upper()
@@ -1304,7 +1331,7 @@ def generar_excel(rows, sheet_name):
     for i, row in enumerate(rows, 2):
         _fila(ws, i, len(COLS), i % 2 == 0)
         for c, key in enumerate(COLS, 1):
-            v    = row.get(key, "")
+            v    = _sanitize(row.get(key, ""))                     # quita caracteres de control del .xls fuente
             cell = ws.cell(i, c, v if v is not None else "")
             if c in (1, 4, 6):                                     # Cuenta, Documento, Nit
                 cell.number_format = "0"
@@ -1767,7 +1794,13 @@ Genera el informe **actualizado** de propietarios.
 
     if st.button("▶ Conciliar", type="primary", disabled=not (f_prop and f_cont)):
         with st.spinner("Procesando..."):
-            df_v1, df_v2, df_v3, crosscheck, analisis, prop_inm, cont_inm = run_conciliacion(f_prop, f_cont, f_tc)
+            st.session_state["concil_result"] = run_conciliacion(f_prop, f_cont, f_tc)
+
+    # El resultado se guarda en session_state para que los filtros y la descarga
+    # sigan funcionando en reruns posteriores (al usar un filtro, st.button vuelve
+    # a False; si el reporte viviera dentro del `if` del botón, desaparecería).
+    if st.session_state.get("concil_result") is not None:
+        df_v1, df_v2, df_v3, crosscheck, analisis, prop_inm, cont_inm = st.session_state["concil_result"]
 
         total_inm = df_v1["Inmueble"].nunique()
         correctos = len(df_v1[df_v1["Estado"]=="CORRECTO"])
@@ -1884,9 +1917,8 @@ Genera el informe **actualizado** de propietarios.
                            file_name="REPORTE_CONCILIACION.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                            type="primary")
-    else:
-        if not (f_prop and f_cont):
-            st.info("👆 Sube **Propietarios** y **Contabilidad** para habilitar el botón **Conciliar**. *Tipo Causa* es opcional.")
+    elif not (f_prop and f_cont):
+        st.info("👆 Sube **Propietarios** y **Contabilidad** para habilitar el botón **Conciliar**. *Tipo Causa* es opcional.")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MÓDULO: ACTAS FONDO — CONTAI
